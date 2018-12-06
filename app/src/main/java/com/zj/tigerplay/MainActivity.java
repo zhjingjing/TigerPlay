@@ -20,14 +20,30 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean handleMessage(Message msg) {
             if (msg.what==1){
-                numLeft= (int) (numLeft+70*Math.random()*10);
-                binding.recyclerLeft.scrollBy(0,numLeft);
+//                numLeft= (int) (numLeft+70*Math.random()*10);
+//                binding.recyclerLeft.scrollBy(0,numLeft);
+//                numCenter= (int) (numCenter+70*Math.random()*10);
+//                binding.recyclerCenter.scrollBy(0,numCenter);
+//                numRight= (int) (numRight+70*Math.random()*10);
+//                binding.recyclerRight.scrollBy(0,numRight);
 
-                numCenter= (int) (numCenter+70*Math.random()*10);
-                binding.recyclerCenter.scrollBy(0,numCenter);
-
-                numRight= (int) (numRight+70*Math.random()*10);
-                binding.recyclerRight.scrollBy(0,numRight);
+                if (numLeft>Integer.MAX_VALUE-100){
+                    numLeft=0;
+                }
+                numLeft+=(Math.random()*100);
+                binding.recyclerLeft.scrollToPosition(numLeft);
+            }else if (msg.what==2){
+                if (numCenter>Integer.MAX_VALUE-100){
+                    numCenter=0;
+                }
+                numCenter+=(Math.random()*100);
+                binding.recyclerCenter.scrollToPosition(numCenter);
+            }else if (msg.what==3){
+                if (numRight>Integer.MAX_VALUE-100){
+                    numRight=0;
+                }
+                numRight+=(Math.random()*100);
+                binding.recyclerRight.scrollToPosition(numRight);
             }
             return false;
         }
@@ -82,6 +98,31 @@ public class MainActivity extends AppCompatActivity {
         if (isStart){
             binding.btn.setText("开始");
             isStart=false;
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                   for (int i=0;i<20;i++){
+                        if (i<10){
+                            try {
+                                Thread.sleep(50);
+                                handler.sendEmptyMessage(2);
+                                handler.sendEmptyMessage(3);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }else{
+                            try {
+                                Thread.sleep(50);
+                                handler.sendEmptyMessage(3);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            }).start();
+
         }else{
             isStart=true;
             binding.btn.setText("停止");
@@ -92,15 +133,15 @@ public class MainActivity extends AppCompatActivity {
                         while (isStart){
                             Thread.sleep(50);
                             handler.sendEmptyMessage(1);
+                            handler.sendEmptyMessage(2);
+                            handler.sendEmptyMessage(3);
                         }
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-
                 }
             }).start();
         }
-
     }
 
 }
